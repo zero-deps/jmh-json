@@ -10,6 +10,7 @@ lazy val root = (project in file(".")).
     libraryDependencies += chill,
     libraryDependencies += pickling,
     libraryDependencies += jackson,
+    libraryDependencies += argonaut,
     resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/",
     resolvers += Resolver.bintrayRepo("evolutiongaming", "maven"),
   )
