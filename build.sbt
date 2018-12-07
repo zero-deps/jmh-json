@@ -13,6 +13,7 @@ lazy val root = (project in file(".")).
     libraryDependencies += argonaut,
     resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/",
     resolvers += Resolver.bintrayRepo("evolutiongaming", "maven"),
+    cancelable in Global := true,
   )
 
 enablePlugins(JmhPlugin)

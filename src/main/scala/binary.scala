@@ -9,7 +9,7 @@ import org.openjdk.jmh.runner.Runner
 import org.openjdk.jmh.runner.RunnerException
 
 final case class Data(key: Array[Byte], bucket: Int, lastModified: Long, vc: List[(String,Long)], value: Array[Byte])
-final case class Data2(key: String, bucket: Int, lastModified: Long, vc: List[(String,Long)], value: String)
+final case class Data_argonaut(key: String, bucket: Int, lastModified: Long, vc: List[(String,Long)], value: String)
 
 object States {
   @State(Scope.Benchmark)
@@ -85,8 +85,8 @@ object States {
   @State(Scope.Benchmark)
   class ArgonautState {
     import argonaut._, Argonaut._
-    val d = Data2((1 to 50).mkString, bucket=10, lastModified=System.currentTimeMillis, vc=List("169.0.0.1:4400"->2000), value=Array.fill(10000)(1).mkString)
-    implicit val c = casecodec5(Data2.apply, Data2.unapply)("a", "b", "c", "d", "e")
+    val d = Data_argonaut((1 to 50).mkString, bucket=10, lastModified=System.currentTimeMillis, vc=List("169.0.0.1:4400"->2000), value=Array.fill(10000)(1).mkString)
+    implicit val c = casecodec5(Data_argonaut.apply, Data_argonaut.unapply)("a", "b", "c", "d", "e")
     val x: Array[Byte] = d.asJson.nospaces.getBytes("UTF-8")
   }
 }
@@ -107,7 +107,7 @@ class ArgonautDecode {
   @Benchmark
   def bench(state: States.ArgonautState): Unit = {
     import state.c
-    (new String(state.x, "UTF-8").decodeOption[Data2].get: Data2)
+    (new String(state.x, "UTF-8").decodeOption[Data_argonaut].get: Data_argonaut)
   }
 }
 
