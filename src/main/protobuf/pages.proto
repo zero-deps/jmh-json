@@ -1,0 +1,230 @@
+syntax = "proto2";
+
+package model.proto;
+
+message En {
+  required string fid = 1;
+  required string id = 2;
+  required string prev = 3;
+  required Author author = 4;
+  required int64 modified = 5;
+  required string version = 6;
+  required string comment = 7;
+}
+
+message Author {
+  required string username = 1;
+  required string firstName = 2;
+  required string lastName = 3;
+}
+
+message EnPage {
+  required En en = 1;
+  required Page page = 2;
+}
+
+message EnByte {
+  required string fid = 1;
+  required string id = 2;
+  required string prev = 3;
+  required Author author = 4;
+  required int64 modified = 5;
+  required string version = 6;
+  required string comment = 7;
+  required bytes data = 8;
+}
+
+message Page {
+  required string parentId = 1;
+  required double priority = 2;
+  map<string, string> name = 3;
+  map<string, string> title = 4;
+  map<string, string> url = 5;
+  required string orgName = 6;
+  required PageType tpe = 7;
+  required PageSeo seo = 8;
+  required PageTheme theme = 9;
+  required PageBackground background = 10;
+  required string layoutScheme = 11;
+  required PageCodeInsertion codeInsertion = 12;
+  required CanonicalTags canonicalTags = 13;
+  required PageMenuConfig menu = 14;
+  required PageAppearance appearance = 15;
+  required Permissions permissions = 16;
+  repeated ColumnWidgets columns = 17;
+  
+  message ColumnWidgets {
+    repeated Widget widgets = 1;
+  }
+}
+
+message PageType {
+  oneof sealed_value {
+    WidgetsType widgetsType = 1;
+    UrlType urlType = 2;
+    PageLinkType pageLinkType = 3;
+  }
+}
+
+message WidgetsType {}
+message UrlType {
+  required string url = 1;
+}
+message PageLinkType {
+  required string pageId = 1;
+}
+
+message PageSeo {
+  map<string, string> description = 1;
+  map<string, string> keywords = 2;
+  map<string, string> robots = 3;
+  required PageSitemap sitemap = 4;
+  required string adobePageTitle = 5;
+} 
+
+message PageSitemap {
+  required bool include = 1;
+  optional double priority = 2;
+  required string frequency = 3;
+}
+
+message PageTheme {
+  oneof sealed_value {
+    PagesetTheme pagesetTheme = 1;
+    CustomTheme customTheme = 2;
+  }
+}
+
+message PagesetTheme {}
+message CustomTheme {
+  required string colorScheme = 1;
+  required string css = 2;
+}
+
+message PageBackground {
+  required string img = 1;
+  required string color = 2;
+  required bool fixed = 3;
+}
+
+message PageCodeInsertion {
+  required string rootClassNames = 1;
+  required string rendering = 2;
+  required string rendered = 3;
+}
+
+message CanonicalTags {
+  required CanonicalTagsType tpe = 1;
+  repeated OtherCanonical others = 2;
+  required bool addLang = 3;
+  required bool tagAsNew = 4;
+}
+
+message CanonicalTagsType {
+  oneof sealed_value {
+    CanonicalTagsPage canonicalTagsPage = 1;
+    CanonicalTagsUrl canonicalTagsUrl = 2;
+  }
+}
+
+message CanonicalTagsPage {
+  required string pageId = 1;
+}
+message CanonicalTagsUrl {
+  required string url = 1;
+}
+
+message OtherCanonical {
+  required string locale = 1;
+  required string url = 2;
+}
+
+message PageMenuConfig {
+  required string cssClasses = 1;
+  required string icon = 2;
+  required string target = 3;
+  required MenuMobile mobile = 4;
+  required MenuTablet tablet = 5;
+  required MenuDesktop desktop = 6;
+}
+  
+message MenuMobile {
+  required bool hidden = 1;
+  required bool expandable = 2;
+  required bool expanded = 3;
+  required bool quickDeposit = 4;
+}
+
+message MenuTablet {
+  required bool hidden = 1;
+  required bool expandable = 2;
+  required bool expanded = 3;
+  required bool quickDeposit = 4;
+  required bool navigationBar = 5;
+}
+
+message MenuDesktop {
+  required bool hidden = 1;
+  required bool hoverMenu = 2;
+  repeated HoverItem hoverItems = 3;
+  required bool quickDeposit = 4;
+  required bool navigationBar = 5;
+}
+
+message HoverItem {
+  required string title = 1;
+  optional string wcId = 2;
+  required bool enabled = 3;
+} 
+
+message PageAppearance {
+  required Appearance mobile = 1;
+  required Appearance tablet = 2;
+  required Appearance desktop = 3;
+}
+
+message Appearance {
+  required bool hideHeader = 1;
+  required bool showAsPopup = 2;
+  required int32 popupWidth = 3;
+  required bool overrideFooter = 4;
+  required string footerWcId = 5;
+}
+
+message Permissions {
+  required bool player = 1;
+  required bool guest = 2;
+}
+
+message Widget {
+  required string id = 1;
+  required int32 version = 2;
+  required WidgetConfig config = 3;
+}
+
+message WidgetConfig {
+  required WidgetLook look = 1;
+  required WidgetPermissions permissions = 2;
+  required WidgetPref pref = 3;
+}
+
+message WidgetLook {
+  map <string, string> titles = 1;
+  required bool useCustomTitle = 2;
+  map <string, bool> enabledDevices = 3;
+  required string mobilePortletOrder = 4;
+  required bool showBorders = 5;
+  required bool showMinIcon = 6;
+  required string initialWindowState = 7;
+  required string customCSSClassName = 8;
+  required string customCSS = 9;
+}
+
+message WidgetPermissions {
+  required bool player = 1;
+  required bool guest = 2;
+}
+
+message WidgetPref {
+  required string pref = 1;
+}
