@@ -25,4 +25,6 @@ jmh:run -i 10 -wi 10 -f1 -t1 .*binary.ProtobufDecode.*
 jmh:run -i 10 -wi 10 -f1 -t1 .*binary.ArgonautEncode.*
 jmh:run -i 10 -wi 10 -f1 -t1 .*binary.ArgonautDecode.*
 
+jmh:run -i 2 -wi 2 -f1 -t1 .*TestTry.*
+
 ```
