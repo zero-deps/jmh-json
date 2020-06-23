@@ -221,7 +221,7 @@ object States {
       import com.github.plokhotnyuk.jsoniter_scala.macros._
       import com.github.plokhotnyuk.jsoniter_scala.core._
       import model.pageInfo._
-      val codec: JsonValueCodec[PageInfoRes] = JsonCodecMaker.make[PageInfoRes](CodecMakerConfig())
+      val codec: JsonValueCodec[PageInfoRes] = JsonCodecMaker.make
       codec
     }
   }

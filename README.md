@@ -27,4 +27,13 @@ jmh:run -i 10 -wi 10 -f1 -t1 .*binary.ArgonautDecode.*
 
 jmh:run -i 2 -wi 2 -f1 -t1 .*TestTry.*
 
+jmh:run -i 10 -wi 10 -f1 -t1 .*JsonDecode*
+```
+
+## results
+
+```
+Benchmark                   Mode  Cnt        Score        Error  Units
+JsonDecode.javaxDecode     thrpt   10   231798.468 ±   1478.929  ops/s
+JsonDecode.jsoniterDecode  thrpt   10  6389881.258 ± 237202.746  ops/s
 ```

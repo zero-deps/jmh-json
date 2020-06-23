@@ -30,15 +30,8 @@ object States {
     val d = Data((1 to 50).mkString("").getBytes("UTF-8"), bucket=10, lastModified=System.currentTimeMillis, vc=List("169.0.0.1:4400"->2000), value=Array.fill(10000)(1))
     import com.github.plokhotnyuk.jsoniter_scala.macros._
     import com.github.plokhotnyuk.jsoniter_scala.core._
-    val c: JsonValueCodec[Data] = JsonCodecMaker.make[Data](CodecMakerConfig())
+    val c: JsonValueCodec[Data] = JsonCodecMaker.make
     val x: Array[Byte] = writeToArray(d)(c)
-  }
-
-  @State(Scope.Benchmark)
-  class PicklingState {
-    val d = Data((1 to 50).mkString("").getBytes("UTF-8"), bucket=10, lastModified=System.currentTimeMillis, vc=List("169.0.0.1:4400"->2000), value=Array.fill(10000)(1))
-    import scala.pickling._,Defaults._,binary._
-    val x: Array[Byte] = d.pickle.value
   }
 
   @State(Scope.Benchmark)
@@ -170,24 +163,6 @@ class ScodecDecode {
   def bench(state: States.ScodecState): Unit = {
     val y = state.c.decode(BitVector.view(state.x)).toOption.get.value
     Data(y._1._1._1._1, y._1._1._1._2, y._1._1._2, y._1._2, y._2)
-  }
-}
-
-class PicklingEncode {
-  import scala.pickling._,Defaults._,binary._
-
-  @Benchmark
-  def bench(state: States.PicklingState): Unit = {
-    state.d.pickle.value
-  }
-}
-
-class PicklingDecode {
-  import scala.pickling._,Defaults._,binary._
-
-  @Benchmark
-  def bench(state: States.PicklingState): Unit = {
-    (state.x.unpickle[Data]: Data)
   }
 }
 

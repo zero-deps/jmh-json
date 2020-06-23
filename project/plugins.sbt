@@ -1,3 +1,3 @@
-addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.3.4")
-addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.19")
-libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.8.2"
+addSbtPlugin("pl.project13.scala" % "sbt-jmh" % "0.3.7")
+addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.28")
+libraryDependencies += "com.thesamet.scalapb" %% "compilerplugin" % "0.10.0"
