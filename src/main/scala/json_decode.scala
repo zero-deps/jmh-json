@@ -4,6 +4,12 @@ import org.openjdk.jmh.annotations._
 
 object JsonDecodeStates {
   @State(Scope.Benchmark)
+  class Jsr374StreamState {
+    import jakarta.json.Json
+    import java.io.StringReader
+    val parser = Json.createParser(new StringReader("""{"inline_query":{"id":"123","query":"1+1"}}"""))
+  }
+  @State(Scope.Benchmark)
   class JavaxState {
     import jdk.nashorn.api.scripting._
     val json = """{"inline_query":{"id":"123","query":"1+1"}}"""
@@ -24,7 +30,24 @@ class JsonDecode {
   import JsonDecodeStates._
 
   @Benchmark
-  def javaxDecode(state: JavaxState): Unit = {
+  def jsr374stream(state: Jsr374StreamState): Unit = {
+    import jakarta.json.stream.JsonParser
+    import state.parser
+    var done = false
+    while (parser.hasNext && !done) {
+      val event = parser.next
+      if (event == JsonParser.Event.KEY_NAME ) {
+        if (parser.getString == "inline_query") {
+          parser.next
+          parser.getObject.getString("query")
+          done = true
+        }
+      }
+    }
+  }
+
+  @Benchmark
+  def nashornDecode(state: JavaxState): Unit = {
     import javax.script._
     state.engine.eval(s"(${state.json}).inline_query").asInstanceOf[Bindings].get("query")
   }

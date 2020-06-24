@@ -35,6 +35,6 @@ class TestTry {
   def try2(state: States.One): Unit = {
     val x: Either[Throwable, String] =
       try { Right(state.f(state.x)) }
-      catch { case x => Left(x) }
+      catch { case x: Throwable => Left(x) }
   }
 }

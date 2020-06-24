@@ -33,7 +33,8 @@ jmh:run -i 10 -wi 10 -f1 -t1 .*JsonDecode*
 ## results
 
 ```
-Benchmark                   Mode  Cnt        Score        Error  Units
-JsonDecode.javaxDecode     thrpt   10   231798.468 ±   1478.929  ops/s
-JsonDecode.jsoniterDecode  thrpt   10  6389881.258 ± 237202.746  ops/s
+Benchmark        Mode  Cnt          Score         Error  Units
+jsoniterDecode  thrpt   10    6551655.607 ±  209754.228  ops/s
+jsr374stream    thrpt   10  126815033.028 ± 6801425.691  ops/s
+nashornDecode   thrpt   10     226113.450 ±    4026.771  ops/s
 ```
