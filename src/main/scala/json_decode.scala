@@ -28,18 +28,21 @@ object JsonDecodeStates {
 
 class JsonDecode {
   import JsonDecodeStates._
+  import model.InlineQuery
 
   @Benchmark
   def jsr374stream(state: Jsr374StreamState): Unit = {
     import jakarta.json.stream.JsonParser
     import state.parser
     var done = false
+    var res: InlineQuery = null
     while (parser.hasNext && !done) {
       val event = parser.next
       if (event == JsonParser.Event.KEY_NAME ) {
         if (parser.getString == "inline_query") {
           parser.next
-          parser.getObject.getString("query")
+          val x = parser.getObject
+          res = InlineQuery(x.getString("id"), x.getString("query"))
           done = true
         }
       }
@@ -49,12 +52,13 @@ class JsonDecode {
   @Benchmark
   def nashornDecode(state: JavaxState): Unit = {
     import javax.script._
-    state.engine.eval(s"(${state.json}).inline_query").asInstanceOf[Bindings].get("query")
+    val x = state.engine.eval(s"(${state.json}).inline_query").asInstanceOf[Bindings]
+    InlineQuery(x.get("id").toString, x.get("query").toString)
   }
 
   @Benchmark
   def jsoniterDecode(state: JsoniterState): Unit = {
     import com.github.plokhotnyuk.jsoniter_scala.core._
-    readFromArray(state.json.getBytes("utf8"))(state.jsoniterCodec).inline_query.query
+    readFromArray(state.json.getBytes("utf8"))(state.jsoniterCodec).inline_query
   }
 }
