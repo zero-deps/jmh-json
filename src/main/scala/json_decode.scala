@@ -4,25 +4,27 @@ import org.openjdk.jmh.annotations._
 
 object JsonDecodeStates {
   @State(Scope.Benchmark)
-  class Jsr374StreamState {
-    import jakarta.json.Json
-    import java.io.StringReader
-    val parser = Json.createParser(new StringReader("""{"inline_query":{"id":"123","query":"1+1"}}"""))
+  class JsonpStreamState {
+    val json = """{"inline_query":{"id":"123","query":"1+1"}}""".getBytes("utf8")
   }
   @State(Scope.Benchmark)
-  class JavaxState {
+  class JsonpPointerState {
+    import jakarta.json.Json
+    val json = """{"inline_query":{"id":"123","query":"1+1"}}""".getBytes("utf8")
+    val pointer = Json.createPointer("/inline_query")
+  }
+  @State(Scope.Benchmark)
+  class NashornState {
     import jdk.nashorn.api.scripting._
-    val json = """{"inline_query":{"id":"123","query":"1+1"}}"""
+    val json = """{"inline_query":{"id":"123","query":"1+1"}}""".getBytes("utf8")
     val engine = new NashornScriptEngineFactory().getScriptEngine("-strict", "--no-java", "--no-syntax-extensions", "--no-typed-arrays", "--no-deprecation-warning")
   }
   @State(Scope.Benchmark)
   class JsoniterState {
-    val json = """{"inline_query":{"id":"123","query":"1+1"}}"""
-    val jsoniterCodec = {
-      import com.github.plokhotnyuk.jsoniter_scala.macros._
-      import com.github.plokhotnyuk.jsoniter_scala.core._
-      JsonCodecMaker.make[model.UpdateMessage]
-    }
+    import com.github.plokhotnyuk.jsoniter_scala.macros._
+    import com.github.plokhotnyuk.jsoniter_scala.core._
+    val json = """{"inline_query":{"id":"123","query":"1+1"}}""".getBytes("utf8")
+    val jsoniterCodec = JsonCodecMaker.make[model.UpdateMessage]
   }
 }
 
@@ -31,9 +33,11 @@ class JsonDecode {
   import model.InlineQuery
 
   @Benchmark
-  def jsr374stream(state: Jsr374StreamState): Unit = {
+  def jsonpStream(state: JsonpStreamState): InlineQuery = {
     import jakarta.json.stream.JsonParser
-    import state.parser
+    import jakarta.json.Json
+    import java.io._
+    val parser = Json.createParser(new InputStreamReader(new ByteArrayInputStream(state.json)))
     var done = false
     var res: InlineQuery = null
     while (parser.hasNext && !done) {
@@ -41,24 +45,34 @@ class JsonDecode {
       if (event == JsonParser.Event.KEY_NAME ) {
         if (parser.getString == "inline_query") {
           parser.next
-          val x = parser.getObject
-          res = InlineQuery(x.getString("id"), x.getString("query"))
+          val iq = parser.getObject
+          res = InlineQuery(iq.getString("id"), iq.getString("query"))
           done = true
         }
       }
     }
+    res
   }
 
   @Benchmark
-  def nashornDecode(state: JavaxState): Unit = {
+  def jsonpPointer(state: JsonpPointerState): InlineQuery = {
+    import jakarta.json.Json
+    import java.io._
+    val obj = Json.createReader(new InputStreamReader(new ByteArrayInputStream(state.json))).readObject
+    val iq = state.pointer.getValue(obj).asJsonObject
+    InlineQuery(iq.getString("id"), iq.getString("query"))
+  }
+
+  @Benchmark
+  def nashorn(state: NashornState): InlineQuery = {
     import javax.script._
-    val x = state.engine.eval(s"(${state.json}).inline_query").asInstanceOf[Bindings]
+    val x = state.engine.eval(s"JSON.parse(json).inline_query", new SimpleBindings(new java.util.HashMap[String,Any](){{ put("json", new String(state.json)) }})).asInstanceOf[Bindings]
     InlineQuery(x.get("id").toString, x.get("query").toString)
   }
 
   @Benchmark
-  def jsoniterDecode(state: JsoniterState): Unit = {
+  def jsoniter(state: JsoniterState): InlineQuery = {
     import com.github.plokhotnyuk.jsoniter_scala.core._
-    readFromArray(state.json.getBytes("utf8"))(state.jsoniterCodec).inline_query
+    readFromArray(state.json)(state.jsoniterCodec).inline_query
   }
 }

@@ -10,6 +10,7 @@ lazy val root = (project in file(".")).
     libraryDependencies += chill,
     libraryDependencies += jackson,
     libraryDependencies += argonaut,
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test,
     resolvers += "Sonatype Public" at "https://oss.sonatype.org/content/groups/public/",
     resolvers += Resolver.bintrayRepo("evolutiongaming", "maven"),
     cancelable in Global := true,

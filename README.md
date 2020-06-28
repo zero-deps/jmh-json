@@ -25,16 +25,17 @@ jmh:run -i 10 -wi 10 -f1 -t1 .*binary.ProtobufDecode.*
 jmh:run -i 10 -wi 10 -f1 -t1 .*binary.ArgonautEncode.*
 jmh:run -i 10 -wi 10 -f1 -t1 .*binary.ArgonautDecode.*
 
-jmh:run -i 2 -wi 2 -f1 -t1 .*TestTry.*
+jmh:run -i 10 -wi 10 -f1 -t1 .*TestTry.*
 
-jmh:run -i 5 -wi 5 -f1 -t1 .*JsonDecode*
+jmh:run -i 10 -wi 10 -f1 -t1 .*JsonDecode*
 ```
 
 ## results
 
 ```
-Benchmark        Mode  Cnt          Score         Error  Units
-jsoniterDecode  thrpt    5    6542564.639 ±  197201.170  ops/s
-jsr374stream    thrpt    5  132334806.523 ± 4980877.395  ops/s
-nashornDecode   thrpt    5     230185.679 ±   15205.139  ops/s
+Benchmark                 Mode  Cnt        Score        Error  Units
+JsonDecode.jsoniter      thrpt   10  7450532.835 ± 237579.075  ops/s
+JsonDecode.jsonpPointer  thrpt   10   118922.144 ±    905.658  ops/s
+JsonDecode.jsonpStream   thrpt   10   120648.815 ±   1741.023  ops/s
+JsonDecode.nashorn       thrpt   10    10203.088 ±     64.012  ops/s
 ```
